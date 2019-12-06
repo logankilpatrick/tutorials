@@ -155,26 +155,26 @@ end
 history = train(qcbm, κ, opt, pg)
 trained_pg = probs(zero_state(nqubits(qcbm)) |&gt; qcbm)
 history</code></pre><pre><code class="language-none">100-element Array{Float64,1}:
- 0.018423233449947757 
- 0.017907619469366844 
- 0.017410193538118818 
- 0.01693051938609872  
- 0.01646829877674049  
- 0.016021989846835484 
- 0.015590002273000059 
- 0.015171328001577583 
- 0.014765857021715281 
- 0.014373176059717494 
+ 0.02407201166616639  
+ 0.02341788322879631  
+ 0.02278364038110197  
+ 0.022169494584816023 
+ 0.021575719838422498 
+ 0.02100086879222986  
+ 0.020443969438371824 
+ 0.019903735605872445 
+ 0.019378886564055432 
+ 0.018868254309501654 
  ⋮                    
- 0.0012235629213225184
- 0.0011690681071954076
- 0.0011162874503611135
- 0.0010652324965923765
- 0.001015813188130103 
- 0.000968098399518173 
- 0.0009218756573050473
- 0.0008773468086927538
- 0.0008345193791980053</code></pre><p>And we have the history of training which is</p><pre><code class="language-julia">
+ 0.0016739590851104348
+ 0.001604197213274788 
+ 0.0015362060051650472
+ 0.001470036070741698 
+ 0.0014058435744028703
+ 0.0013435726369659907
+ 0.001283301863434639 
+ 0.001224595822247018 
+ 0.0011677626261434584</code></pre><p>And we have the history of training which is</p><pre><code class="language-julia">
 using Plots
 fig1 = plot(history; legend=nothing)
 title!(&quot;training history&quot;)
@@ -182,4 +182,4 @@ xlabel!(&quot;steps&quot;); ylabel!(&quot;loss&quot;)</code></pre><p><img src=".
 fig2 = plot(1:1&lt;&lt;6, trained_pg; label=&quot;trained&quot;)
 plot!(fig2, 1:1&lt;&lt;6, pg; label=&quot;target&quot;)
 title!(&quot;distribution&quot;)
-xlabel!(&quot;x&quot;); ylabel!(&quot;p&quot;)</code></pre><p><img src="../../assets/figures/distribution.png" alt/></p><p>So within 50 steps, we got a pretty close estimation of our target distribution!</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../QFT/">« Quantum Fourier Transformation and Phase Estimation</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 6 December 2019 08:04">Friday 6 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+xlabel!(&quot;x&quot;); ylabel!(&quot;p&quot;)</code></pre><p><img src="../../assets/figures/distribution.png" alt/></p><p>So within 50 steps, we got a pretty close estimation of our target distribution!</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../QFT/">« Quantum Fourier Transformation and Phase Estimation</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 6 December 2019 08:30">Friday 6 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
