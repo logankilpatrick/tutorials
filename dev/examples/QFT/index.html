@@ -127,67 +127,66 @@ P = eigen(rand_unitary(1&lt;&lt;M)).vectors
 phases = rand(1&lt;&lt;M)
 phases[0b010+1] = θ
 U = P * Diagonal(exp.(2π * im * phases)) * P&#39;</code></pre><pre><code class="language-none">32×32 Array{Complex{Float64},2}:
-  -0.201311+0.153415im     0.0680155-0.03361im    …  -0.00703489+0.142684im
-  
-   0.120452+0.0387173im   -0.0497582-0.151899im        -0.112906+0.241991im
-  
-  0.0756634+0.0742465im     0.124635+0.0753078im        0.045956-0.139628im
-  
- -0.0337668-0.045019im     -0.102752-0.0848405im      -0.0241686+0.00206684
-im
- -0.0863653-0.144877im     0.0102008-0.022143im       -0.0208001-0.0847269i
-m 
-  -0.229779+0.290016im    -0.0828155-0.0285031im  …     0.030657+0.121724im
-  
- 0.00770464-0.08156im     -0.0295384+0.230911im       -0.0351231-0.137911im
-  
-  0.0965012-0.00234942im  -0.0411389+0.102013im        -0.352598+0.171429im
-  
-    0.09433+0.165428im     0.0467629+0.112515im        0.0214374-0.0932747i
-m 
-  0.0896431+0.057081im     -0.110949-0.0811607im        0.136893+0.149264im
-  
-           ⋮                                      ⋱                        
-  
-   0.097814-0.0332826im    -0.119648+0.185073im       -0.0417887-0.0556025i
-m 
-  -0.163849+0.0851884im    0.0337934+0.102983im       -0.0140719+0.00690167
-im
- -0.0695315+0.0175718im    0.0349543-0.280111im   …    -0.083824-0.0350079i
-m 
-  0.0984378+0.060288im    -0.0309594-0.199932im        -0.197634+0.105157im
-  
-   0.166009-0.254097im     0.0853402-0.0555437im      -0.0777427+0.0482075i
-m 
-  -0.118444+0.154752im     0.0505315+0.0125841im      -0.0784119+0.271472im
-  
-   0.199052+0.100019im      0.140555+0.12511im        -0.0747961+0.232933im
-  
-   0.155247-0.0255125im    0.0876479-0.164171im   …   -0.0825405+0.0127286i
-m 
-  0.0923072-0.0749875im     0.036107+0.0912277im        0.144413-0.0500376i
-m</code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
- -0.051725130859114676 - 0.0693943383972839im  
-   0.12333577422242914 - 0.09127286854141749im 
-  -0.04837077005764101 + 0.18921205749647757im 
-   0.03440756586890081 - 0.1566724370294835im  
-  -0.24800136775507942 - 0.07342500425299313im 
-   0.12755277064619877 + 0.06754576635128981im 
-   0.06011608183252026 + 0.046000942817555006im
-   0.05045898204873779 - 0.1278414081544288im  
-  0.022834668362881776 + 0.002619040014973909im
-  0.013873991264086713 + 0.28212905117581555im 
-                       ⋮                       
-  -0.09824678998761385 + 0.002862004505144976im
-   0.19634255234011833 - 0.06634328834041897im 
-  -0.09245045189503974 - 0.1527798810359341im  
-  0.004091126542815632 + 0.01454662721064839im 
-   0.01444033270574388 - 0.14413670181954025im 
-   0.04996880239109469 - 0.035777934708907895im
-   0.08763681068611157 + 0.1927799574747105im  
-  -0.11973411848434673 - 0.06935917254217616im 
-   -0.0933372858050088 - 0.13817536029501498im</code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
+  -0.0964366+0.0696038im     -0.22812-0.123914im   …  -0.0383841-0.0904698i
+m
+   0.0269193-0.0245384im    0.0542209-0.232234im        -0.24488+0.0454055i
+m
+  -0.0244713-0.0851941im   -0.0124122-0.16234im        0.0120914+0.212593im
+ 
+     0.13461-0.111903im       0.30969+0.0355607im     -0.0149773+0.173864im
+ 
+    -0.17025-0.194133im     0.0070517+0.16647im         0.282019-0.0559608i
+m
+    0.234909-0.0948812im    0.0308537-0.0109173im  …   0.0641436-0.0910641i
+m
+    0.336845+0.169767im     0.0638859-0.126971im        0.152071-0.0503154i
+m
+   -0.244134-0.152205im      0.147739+0.16562im         0.173493-0.1607im  
+ 
+  -0.0420219-0.11531im      0.0210352-0.0441782im     -0.0709717-0.141034im
+ 
+   0.0380916+0.00691155im   0.0209686+0.0332373im     -0.0563143-0.0209769i
+m
+            ⋮                                      ⋱                       
+ 
+  -0.0319011+0.0037212im    -0.142666-0.0114787im      0.0996099+0.0141112i
+m
+   0.0603972+0.179302im    -0.0326508+0.0589441im     -0.0294455+0.0462123i
+m
+   0.0451431+0.12915im      0.0816682-0.0428566im  …    0.192786-0.010509im
+ 
+    0.160716+0.0277952im     0.166588-0.153202im      -0.0545196+0.0412601i
+m
+  -0.0668248-0.190088im      0.192386-0.116854im      -0.0330846-0.0155816i
+m
+   -0.211951+0.231157im     0.0311465+0.0370545im      0.0544511-0.111681im
+ 
+    0.236783-0.00111232im   -0.150486+0.0949946im      0.0260607-0.154514im
+ 
+  -0.0132615+0.0332967im   -0.0651065-0.0080571im  …  -0.0401428+0.130564im
+ 
+ -0.00856872-0.129747im     -0.151806-0.0460316im      -0.148107-0.319626im</code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
+      0.0632137651004546 - 0.037422296492516716im
+      0.1303652360562697 + 0.02877504114535774im 
+    -0.24214349618957243 + 0.13457518557472742im 
+ -0.00012732219871759015 + 0.03642525864354943im 
+      0.0726835574596861 + 0.03279973400644548im 
+   -0.005064546342076336 - 0.1320834846972488im  
+    -0.06800132636271827 + 0.10208042025688498im 
+    -0.15715457842129907 + 0.19100741535404583im 
+   -0.058337364726084626 + 0.025276985458521792im
+     0.22570866117969632 + 0.12991348198738237im 
+                         ⋮                       
+     0.04237886328972741 - 0.24225898509567648im 
+      0.1568369965927489 + 0.08797578006089002im 
+     0.10510575046689666 + 0.18354403720114504im 
+     0.19101414978968412 - 0.09641407506515581im 
+    0.010685671191004172 + 0.10901288496761188im 
+    -0.23659473713561427 - 0.07874794013441894im 
+     0.06727452126331698 + 0.15495056923876158im 
+     -0.1408562037752452 + 0.07415379001676875im 
+     0.10440802423545367 + 0.005998239320120051im</code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
 r |&gt; PE(N, M, U)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 8/8</code></pre><p>Since our phase can be represented by 3 qubits precisely, we only need to measure once</p><pre><code class="language-julia">results = measure(r, 1:N; nshots=1)</code></pre><pre><code class="language-none">1-element Array{BitBasis.BitStr{3,Int64},1}:
  011 ₍₂₎</code></pre><p>Recall that our QFT&#39;s bit numbering is reversed, let&#39;s reverse it back</p><pre><code class="language-julia">using BitBasis
-estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../GHZ/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../QCBM/">Quantum Circuit Born Machine »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 6 December 2019 08:30">Friday 6 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../GHZ/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../QCBM/">Quantum Circuit Born Machine »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 6 December 2019 08:32">Friday 6 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
