@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Quantum Fourier Transformation and Phase Estimation · Tutorial|Yao</title><link rel="canonical" href="https://tutorials.yaoquantum.org/examples/QFT/index.html"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/main.css" rel="stylesheet" type="text/css"/><link href="https://yaoquantum.org/assets/main.css" rel="stylesheet" type="text/css"/><link href="http://yaoquantum.org/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="top" class="navbar-wrapper">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="https://yaoquantum.org/">
+        <img src="https://yaoquantum.org//assets/images/logo-light.png">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <!-- <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li> -->
+        <li class="nav-item active">
+          <a class="nav-link" href="https://yaoquantum.org//tutorials">Tutorial<span class="sr-only">(current)</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://quantumbfs.github.io/Yao.jl/latest/">Documentation</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://yaoquantum.org//benchmark">Benchmark</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://github.com/QuantumBFS/Yao.jl">GitHub</a>
+        </li>
+      </ul>
+    </div>
+</nav>
+</div>
+<div class="documenter-wrapper" id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Tutorial|Yao</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../GHZ/">Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a></li><li class="is-active"><a class="tocitem" href>Quantum Fourier Transformation and Phase Estimation</a><ul class="internal"><li><a class="tocitem" href="#Quantum-Fourier-Transformation-1"><span>Quantum Fourier Transformation</span></a></li><li><a class="tocitem" href="#Wrap-QFT-to-an-external-block-1"><span>Wrap QFT to an external block</span></a></li><li><a class="tocitem" href="#Phase-Estimation-1"><span>Phase Estimation</span></a></li></ul></li><li><a class="tocitem" href="../QCBM/">Quantum Circuit Born Machine</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/QuantumBFS/tutorials/blob/master/src/examples/QFT.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Quantum-Fourier-Transformation-and-Phase-Estimation-1"><a class="docs-heading-anchor" href="#Quantum-Fourier-Transformation-and-Phase-Estimation-1">Quantum Fourier Transformation and Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#Quantum-Fourier-Transformation-and-Phase-Estimation-1" title="Permalink"></a></h1><p>Let&#39;s use Yao first</p><pre><code class="language-julia">using Yao</code></pre><h2 id="Quantum-Fourier-Transformation-1"><a class="docs-heading-anchor" href="#Quantum-Fourier-Transformation-1">Quantum Fourier Transformation</a><a class="docs-heading-anchor-permalink" href="#Quantum-Fourier-Transformation-1" title="Permalink"></a></h2><p>The Quantum Fourier Transformation (QFT) circuit is to repeat two kinds of blocks repeatly:</p><p><img src="../../assets/figures/qft.png" alt="ghz"/></p><p>The basic building block control phase shift gate is defined as</p><div>\[R(k)=\begin{bmatrix}
+1 &amp; 0\\
+0 &amp; \exp\left(\frac{2\pi i}{2^k}\right)
+\end{bmatrix}\]</div><p>Let&#39;s define block <code>A</code> and block <code>B</code>, block <code>A</code> is actually a control block.</p><pre><code class="language-julia">A(i, j) = control(i, j=&gt;shift(2π/(1&lt;&lt;(i-j+1))))</code></pre><pre><code class="language-none">A (generic function with 1 method)</code></pre><p>Once you construct the blockl you can inspect its matrix using <a href="examples/@ref"><code>mat</code></a> function. Let&#39;s construct the circuit in dash box A, and see the matrix of <span>$R_4$</span> gate.</p><pre><code class="language-julia">R4 = A(4, 1)</code></pre><pre><code class="language-none">(n -&gt; control(n, 4, 1 =&gt; shift(0.39269908169872414)))</code></pre><p>If you have read about <a href="../GHZ/#example-ghz-1">preparing GHZ state</a>, you probably know that in Yao, we could just leave the number of qubits, and it will be evaluated when possible.</p><pre><code class="language-julia">R4(5)</code></pre><pre><code class="language-none">nqubits: 5
+control(4)
+└─ (1,) shift(0.39269908169872414)</code></pre><p>its matrix will be</p><pre><code class="language-julia">mat(R4(5))</code></pre><pre><code class="language-none">32×32 LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}:
+ 1.0+0.0im      ⋅          ⋅          ⋅      …      ⋅              ⋅       
+  
+     ⋅      1.0+0.0im      ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅      1.0+0.0im      ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅      1.0+0.0im         ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅      …      ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+    ⋮                                        ⋱     ⋮                       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅      …      ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅              ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅      …  1.0+0.0im          ⋅       
+  
+     ⋅          ⋅          ⋅          ⋅             ⋅      0.92388+0.382683
+im</code></pre><p>Then we repeat this control block over and over on different qubits, and put a Hadamard gate to <code>i</code>th qubit to construct <code>i</code>-th <code>B</code> block.</p><pre><code class="language-julia">B(n, k) = chain(n, j==k ? put(k=&gt;H) : A(j, k) for j in k:n)</code></pre><pre><code class="language-none">B (generic function with 1 method)</code></pre><p>We need to input the total number of qubits <code>n</code> here because we have to iterate through from <code>k</code>-th location to the last.</p><p>Now, let&#39;s construct the circuit by chaining all the <code>B</code> blocks together</p><pre><code class="language-julia">qft(n) = chain(B(n, k) for k in 1:n)
+
+qft(4)</code></pre><pre><code class="language-none">nqubits: 4
+chain
+├─ chain
+│  ├─ put on (1)
+│  │  └─ H gate
+│  ├─ control(2)
+│  │  └─ (1,) shift(1.5707963267948966)
+│  ├─ control(3)
+│  │  └─ (1,) shift(0.7853981633974483)
+│  └─ control(4)
+│     └─ (1,) shift(0.39269908169872414)
+├─ chain
+│  ├─ put on (2)
+│  │  └─ H gate
+│  ├─ control(3)
+│  │  └─ (2,) shift(1.5707963267948966)
+│  └─ control(4)
+│     └─ (2,) shift(0.7853981633974483)
+├─ chain
+│  ├─ put on (3)
+│  │  └─ H gate
+│  └─ control(4)
+│     └─ (3,) shift(1.5707963267948966)
+└─ chain
+   └─ put on (4)
+      └─ H gate</code></pre><h2 id="Wrap-QFT-to-an-external-block-1"><a class="docs-heading-anchor" href="#Wrap-QFT-to-an-external-block-1">Wrap QFT to an external block</a><a class="docs-heading-anchor-permalink" href="#Wrap-QFT-to-an-external-block-1" title="Permalink"></a></h2><p>In most cases, <code>function</code>s are enough to wrap quantum circuits, like <code>A</code> and <code>B</code> we defined above, but sometimes, we need to dispatch specialized methods on certain kinds of quantum circuit, or we want to define an external block to export, thus, it&#39;s useful to be able to wrap circuit to custom blocks.</p><p>First, we define a new type as subtype of <a href="examples/@ref"><code>PrimitiveBlock</code></a> since we are not going to use the subblocks of <code>QFT</code>, if you need to use its subblocks, it&#39;d be better to define it under <a href="examples/@ref"><code>CompositeBlock</code></a>.</p><pre><code class="language-julia">struct QFT{N} &lt;: PrimitiveBlock{N} end
+QFT(n::Int) = QFT{n}()</code></pre><pre><code class="language-none">Main.WeaveSandBox1.QFT</code></pre><p>Now, let&#39;s define its circuit</p><pre><code class="language-julia">circuit(::QFT{N}) where N = qft(N)</code></pre><pre><code class="language-none">circuit (generic function with 1 method)</code></pre><p>And forward <a href="examples/@ref"><code>mat</code></a> to its circuit&#39;s matrix</p><pre><code class="language-julia">YaoBlocks.mat(::Type{T}, x::QFT) where T = mat(T, circuit(x))</code></pre><p>You may notice, it is a little ugly to print <code>QFT</code> at the moment, this is because we print the type summary by default, you can define your own printing by overloading <a href="examples/@ref"><code>print_block</code></a></p><pre><code class="language-julia">YaoBlocks.print_block(io::IO, x::QFT{N}) where N = print(io, &quot;QFT($N)&quot;)</code></pre><p>Since it is possible to use FFT to simulate the results of QFT (like cheating), we could define our custom <a href="examples/@ref"><code>apply!</code></a> method:</p><pre><code class="language-julia">using FFTW, LinearAlgebra
+
+function YaoBlocks.apply!(r::ArrayReg, x::QFT)
+    α = sqrt(length(statevec(r)))
+    invorder!(r)
+    lmul!(α, ifft!(statevec(r)))
+    return r
+end</code></pre><p>Now let&#39;s check if our <code>apply!</code> method is correct:</p><pre><code class="language-julia">r = rand_state(5)
+r1 = r |&gt; copy |&gt; QFT(5)
+r2 = r |&gt; copy |&gt; circuit(QFT(5))
+r1 ≈ r2</code></pre><pre><code class="language-none">true</code></pre><p>We can get iQFT (inverse QFT) directly by calling <code>adjoint</code></p><pre><code class="language-julia">QFT(5)&#39;</code></pre><pre><code class="language-none">[†]QFT(5)</code></pre><p>QFT and iQFT are different from FFT and IFFT in three ways,</p><ol><li>they are different by a factor of <span>$\sqrt{2^n}$</span> with <span>$n$</span> the number of qubits.</li><li>the <a href="https://quantumbfs.github.io/BitBasis.jl/stable/tutorial/#Conventions-1">bit numbering</a> will exchange after applying QFT or iQFT.</li><li>due to the convention, QFT is more related to IFFT rather than FFT.</li></ol><h2 id="Phase-Estimation-1"><a class="docs-heading-anchor" href="#Phase-Estimation-1">Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#Phase-Estimation-1" title="Permalink"></a></h2><p>Since we have QFT and iQFT blocks we can then use them to realize phase estimation circuit, what we want to realize is the following circuit:</p><p><img src="../../assets/figures/phaseest.png" alt="phase estimation"/></p><pre><code class="language-julia">using Yao</code></pre><p>First we call Hadamard gates repeatly on first <code>n</code> qubits.</p><pre><code class="language-julia">Hadamards(n) = repeat(H, 1:n)</code></pre><pre><code class="language-none">Hadamards (generic function with 1 method)</code></pre><p>Then in dashed box <code>B</code>, we have controlled unitaries:</p><pre><code class="language-julia">ControlU(n, m, U) = chain(n+m, control(k, n+1:n+m=&gt;matblock(U^(2^(k-1)))) for k in 1:n)</code></pre><pre><code class="language-none">ControlU (generic function with 1 method)</code></pre><p>each of them is a <code>U</code> of power <span>$2^(k-1)$</span>.</p><p>Since we will only apply the qft and Hadamard on first <code>n</code> qubits, we could use <a href="examples/@ref"><code>Concentrator</code></a>, which creates a context of a sub-scope of the qubits.</p><pre><code class="language-julia">PE(n, m, U) =
+    chain(n+m, # total number of the qubits
+        concentrate(Hadamards(n), 1:n), # apply H in local scope
+        ControlU(n, m, U),
+        concentrate(QFT(n)&#39;, 1:n))</code></pre><pre><code class="language-none">PE (generic function with 1 method)</code></pre><p>we use the first <code>n</code> qubits as the output space to store phase <span>$ϕ$</span>, and the other <code>m</code> qubits as the input state which corresponds to an eigenvector of oracle matrix <code>U</code>.</p><p>The concentrator here uses <a href="examples/@ref"><code>focus!</code></a> and <a href="examples/@ref"><code>relax!</code></a> to manage a local scope of quantum circuit, and only active the first <code>n</code> qubits while applying the block inside the concentrator context, and the scope will be <a href="examples/@ref"><code>relax!</code></a>ed back, after the context. This is equivalent to manually <a href="examples/@ref"><code>focus!</code></a> then <a href="examples/@ref"><code>relax!</code></a></p><p>fullly activated</p><pre><code class="language-julia">r = rand_state(5)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
+    active qubits: 5/5</code></pre><p>first 3 qubits activated</p><pre><code class="language-julia">focus!(r, 1:3)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
+    active qubits: 3/5</code></pre><p>relax back to the original</p><pre><code class="language-julia">relax!(r, 1:3)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
+    active qubits: 5/5</code></pre><p>In this way, we will be able to apply small operator directly on the subset of the qubits.</p><p>Details about the algorithm can be found here: <a href="ttps://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a></p><p>Now let&#39;s check the results of our phase estimation.</p><p>First we need to set up a unitary with known phase, we set the phase to be 0.75, which is <code>0.75 * 2^3 == 6 == 0b110</code> .</p><pre><code class="language-julia">using LinearAlgebra
+
+N, M = 3, 5
+P = eigen(rand_unitary(1&lt;&lt;M)).vectors
+θ = Int(0b110) / 1&lt;&lt;N
+phases = rand(1&lt;&lt;M)
+phases[0b010+1] = θ
+U = P * Diagonal(exp.(2π * im * phases)) * P&#39;</code></pre><pre><code class="language-none">32×32 Array{Complex{Float64},2}:
+   0.0565556+0.0425885im   …   0.0226589-0.0020623im  
+    0.123062+0.0409519im       -0.121147+0.0216564im  
+   -0.183106-0.12376im         0.0354579+0.187615im   
+   -0.148903+0.00474477im      -0.136286-0.081974im   
+   -0.129566+0.00113872im      0.0571828+0.0800497im  
+   -0.115607+0.152057im    …   -0.142967-0.046707im   
+     0.04736+0.0564678im      -0.0488684+0.0202518im  
+ -0.00229866+0.00845844im      0.0702126-0.0630157im  
+   0.0779629-0.0712981im       -0.239403-0.10918im    
+   0.0908663-0.128403im       -0.0553863+0.205241im   
+            ⋮              ⋱                          
+   0.0564925-0.23982im         0.0756285-0.00594002im 
+     -0.1224-0.0485559im       -0.183584-0.049793im   
+  -0.0654567+0.0465641im   …   0.0648556-0.000537134im
+ -0.00195434+0.0724442im      -0.0555338+0.00488794im 
+ -0.00125589+0.326641im        -0.165862-0.0232271im  
+  -0.0253255+0.210704im       -0.0213314-0.0551593im  
+    0.193016+0.170416im         0.165834+0.0301114im  
+   0.0726668-0.00885202im  …    0.226516+0.0962834im  
+    0.141065-0.237368im       -0.0752827+0.150928im</code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
+   0.18040278282704625 - 0.13977593697589633im 
+  5.234076709684926e-5 + 0.17623864058205643im 
+  0.044780943151365146 - 0.10259545304618721im 
+  0.016321637795938475 - 0.10552815982480714im 
+ -0.014250592131305575 + 0.057737360804952384im
+  0.016334106371548238 - 0.06754334608433303im 
+   0.08782827218133128 + 0.021492680247645023im
+   0.08342679193731103 - 0.07657627850451246im 
+  -0.07609783541775113 - 0.2947943862991301im  
+  -0.06177352573801656 - 0.07741644028994196im 
+                       ⋮                       
+  0.025561622804943587 + 0.15480705158092914im 
+  -0.12585332257063728 - 0.2685912382813701im  
+    0.1051074358515524 + 0.10793683165029225im 
+ -0.019952573708040443 + 0.0409795503345977im  
+   0.11880060504728232 + 0.03077320658174334im 
+   0.06522408537666682 - 0.09743866035458525im 
+  -0.03767826959161613 + 0.25690872670121095im 
+  -0.20812787924572157 + 0.20642707868502885im 
+   0.41293495550624776 + 0.0im</code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
+r |&gt; PE(N, M, U)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
+    active qubits: 8/8</code></pre><p>Since our phase can be represented by 3 qubits precisely, we only need to measure once</p><pre><code class="language-julia">results = measure(r, 1:N; nshots=1)</code></pre><pre><code class="language-none">1-element Array{BitBasis.BitStr{3,Int64},1}:
+ 011 ₍₂₎</code></pre><p>Recall that our QFT&#39;s bit numbering is reversed, let&#39;s reverse it back</p><pre><code class="language-julia">using BitBasis
+estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../GHZ/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../QCBM/">Quantum Circuit Born Machine »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 6 December 2019 06:50">Friday 6 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
