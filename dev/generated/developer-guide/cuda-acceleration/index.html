@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>CUDA acceleration of Quantum Simulation · Tutorial|Yao</title><link rel="canonical" href="https://tutorials.yaoquantum.org/generated/developer-guide/cuda-acceleration/index.html"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link href="../../../assets/main.css" rel="stylesheet" type="text/css"/><link href="https://yaoquantum.org/assets/main.css" rel="stylesheet" type="text/css"/><link href="http://yaoquantum.org/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="top" class="navbar-wrapper">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="https://yaoquantum.org">
+        <img src="https://yaoquantum.org/assets/images/logo-light.png">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Tutorial<span class="sr-only">(current)</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://docs.yaoquantum.org/dev">Documentation</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://yaoquantum.org/benchmark">Benchmark</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="http://yaoquantum.org/soc">SoC</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="http://yaoquantum.org/research">Research</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="https://github.com/QuantumBFS/Yao.jl">GitHub</a>
+        </li>
+      </ul>
+    </div>
+</nav>
+</div>
+<div class="documenter-wrapper" id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Tutorial|Yao</span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><span class="tocitem">Quick Start</span><ul><li><a class="tocitem" href="../../quick-start/extern-libraries/">Using External Libraries</a></li><li><a class="tocitem" href="../../quick-start/prepare-ghz-state/">Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a></li><li><a class="tocitem" href="../../quick-start/qft-phase-estimation/">Quantum Fourier Transformation and Phase Estimation</a></li><li><a class="tocitem" href="../../quick-start/quantum-circuit-born-machine/">Quantum Circuit Born Machine</a></li><li><a class="tocitem" href="../../quick-start/shor-9-code/">Shor&#39;s 9 qubit code</a></li><li><a class="tocitem" href="../../quick-start/variation-quantum-eigen-solver/">Variational Quantum Eigen Solver</a></li></ul></li><li><span class="tocitem">Developer Guide</span><ul><li class="is-active"><a class="tocitem" href>CUDA acceleration of Quantum Simulation</a></li><li><a class="tocitem" href="../extending-register/">Extending Register: an echo register</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Developer Guide</a></li><li class="is-active"><a href>CUDA acceleration of Quantum Simulation</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>CUDA acceleration of Quantum Simulation</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/QuantumBFS/tutorials/blob/master/developer-guide/cuda-acceleration/main.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><p><a href="https://mybinder.org/v2/gh/QuantumBFS/tutorials/gh-pages?filepath=dev/generated/developer-guide/cuda-acceleration/main.ipynb"><img src="https://mybinder.org/badge_logo.svg" alt/></a> <a href="https://nbviewer.jupyter.org/github/QuantumBFS/tutorials/blob/gh-pages/dev/generated/developer-guide/cuda-acceleration/main.ipynb"><img src="https://img.shields.io/badge/show-nbviewer-579ACA.svg" alt/></a></p><h1 id="CUDA-acceleration-of-Quantum-Simulation-1"><a class="docs-heading-anchor" href="#CUDA-acceleration-of-Quantum-Simulation-1">CUDA acceleration of Quantum Simulation</a><a class="docs-heading-anchor-permalink" href="#CUDA-acceleration-of-Quantum-Simulation-1" title="Permalink"></a></h1><p>For example, a SWAP gate can be instructed on a GPU register like</p><pre><code class="language-julia">function instruct!(reg::GPUReg, ::Val{:SWAP}, locs::Tuple{Int,Int})
+    b1, b2 = locs
+    state = statevec(reg)
+    mask1 = bmask(b1)
+    mask2 = bmask(b2)
+
+    function kf(state, mask1, mask2)
+        inds = ((blockIdx().x-1) * blockDim().x + threadIdx().x,
+                       (blockIdx().y-1) * blockDim().y + threadIdx().y)
+        b = inds[1]-1
+        c = inds[2]
+        c &lt;= size(state, 2) || return nothing
+        if b&amp;mask1==0 &amp;&amp; b&amp;mask2==mask2
+            i = b+1
+            i_ = b  (mask1|mask2) + 1
+            temp = state[i, c]
+            state[i, c] = state[i_, c]
+            state[i_, c] = temp
+        end
+        nothing
+    end
+    X, Y = cudiv(size(state)...)
+    @cuda threads=X blocks=Y kf(state, mask1, mask2)
+    state
+end</code></pre><p>Here, we devide the threads and blocks into a two dimensional grid with a same shape as the input GPUReg storage (i.e. <span>$2^a\times 2^rB$</span>). Only if two qubits at <code>locs</code> are <span>$0$</span> and <span>$1$</span> respectively, they are exchanged, otherwise do nothing. Although <span>$3/4$</span> of threads are idle and plenty room for optimization, from this example, we see how easy CUDA programming is with <a href="https://github.com/JuliaGPU/CUDAnative.jl">CUDAnative</a>. In appendix \App{app-reg}, we show another example of creating a register that echos received instructions.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../quick-start/variation-quantum-eigen-solver/">« Variational Quantum Eigen Solver</a><a class="docs-footer-nextpage" href="../extending-register/">Extending Register: an echo register »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 7 December 2019 11:30">Saturday 7 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
