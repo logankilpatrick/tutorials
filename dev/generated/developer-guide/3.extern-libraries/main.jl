@@ -2,6 +2,9 @@ using Yao
 using LinearAlgebra
 using PyCall
 
+pip = pyimport("pip._internal.main")
+pip.main(["install", "pyscf", "openfermion", "openfermionpyscf"])
+
 of_hamil = pyimport("openfermion.hamiltonians")
 of_trsfm = pyimport("openfermion.transforms")
 of_pyscf = pyimport("openfermionpyscf")
