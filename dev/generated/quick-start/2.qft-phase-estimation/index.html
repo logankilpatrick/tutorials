@@ -37,7 +37,7 @@
     </div>
 </nav>
 </div>
-<div class="documenter-wrapper" id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Tutorial|Yao</span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><span class="tocitem">Quick Start</span><ul><li><a class="tocitem" href="../1.prepare-ghz-state/">Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a></li><li class="is-active"><a class="tocitem" href>Quantum Fourier Transformation and Phase Estimation</a><ul class="internal"><li><a class="tocitem" href="#Quantum-Fourier-Transformation-1"><span>Quantum Fourier Transformation</span></a></li><li><a class="tocitem" href="#Wrap-QFT-to-an-external-block-1"><span>Wrap QFT to an external block</span></a></li><li><a class="tocitem" href="#Phase-Estimation-1"><span>Phase Estimation</span></a></li><li class="toplevel"><a class="tocitem" href="#using-LinearAlgebra-1"><span>using LinearAlgebra</span></a></li></ul></li><li><a class="tocitem" href="../3.grover-search/">Grover Search</a></li><li><a class="tocitem" href="../4.shor-9-code/">Shor&#39;s 9 qubit code</a></li><li><a class="tocitem" href="../5.quantum-circuit-born-machine/">Quantum Circuit Born Machine</a></li><li><a class="tocitem" href="../6.variation-quantum-eigen-solver/">Variational Quantum Eigen Solver</a></li></ul></li><li><span class="tocitem">Developer Guide</span><ul><li><a class="tocitem" href="../../developer-guide/1.extending-register/">Extending Register: an echo register</a></li><li><a class="tocitem" href="../../developer-guide/2.cuda-acceleration/">CUDA acceleration of Quantum Simulation</a></li><li><a class="tocitem" href="../../developer-guide/3.extern-libraries/">Using External Libraries</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Quick Start</a></li><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/QuantumBFS/tutorials/blob/master/quick-start/2.qft-phase-estimation/main.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><p><a href="https://mybinder.org/v2/gh/QuantumBFS/tutorials/gh-pages?filepath=dev/generated/quick-start/2.qft-phase-estimation/main.ipynb"><img src="https://mybinder.org/badge_logo.svg" alt/></a> <a href="https://nbviewer.jupyter.org/github/QuantumBFS/tutorials/blob/gh-pages/dev/generated/quick-start/2.qft-phase-estimation/main.ipynb"><img src="https://img.shields.io/badge/show-nbviewer-579ACA.svg" alt/></a></p><h1 id="example-qft-1"><a class="docs-heading-anchor" href="#example-qft-1">Quantum Fourier Transformation and Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#example-qft-1" title="Permalink"></a></h1><p>Let&#39;s use Yao first</p><pre><code class="language-julia">using Yao</code></pre><h2 id="Quantum-Fourier-Transformation-1"><a class="docs-heading-anchor" href="#Quantum-Fourier-Transformation-1">Quantum Fourier Transformation</a><a class="docs-heading-anchor-permalink" href="#Quantum-Fourier-Transformation-1" title="Permalink"></a></h2><p>The Quantum Fourier Transformation (QFT) circuit is to repeat two kinds of blocks repeatly:</p><p><img src="assets/qft.png" alt="qft-circuit"/></p><p>The basic building block control phase shift gate is defined as</p><div>\[R(k)=\begin{bmatrix}
+<div class="documenter-wrapper" id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Tutorial|Yao</span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><span class="tocitem">Quick Start</span><ul><li><a class="tocitem" href="../1.prepare-ghz-state/">Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a></li><li class="is-active"><a class="tocitem" href>Quantum Fourier Transformation and Phase Estimation</a><ul class="internal"><li><a class="tocitem" href="#Quantum-Fourier-Transformation-1"><span>Quantum Fourier Transformation</span></a></li><li><a class="tocitem" href="#Wrap-QFT-to-an-external-block-1"><span>Wrap QFT to an external block</span></a></li><li><a class="tocitem" href="#Phase-Estimation-1"><span>Phase Estimation</span></a></li><li class="toplevel"><a class="tocitem" href="#using-LinearAlgebra-1"><span>using LinearAlgebra</span></a></li></ul></li><li><a class="tocitem" href="../3.grover-search/">Grover Search</a></li><li><a class="tocitem" href="../4.shor-algorithm/">Shor&#39;s Algorithm</a></li><li><a class="tocitem" href="../5.shor-9-code/">Shor&#39;s 9 qubit code</a></li><li><a class="tocitem" href="../6.quantum-circuit-born-machine/">Quantum Circuit Born Machine</a></li><li><a class="tocitem" href="../7.variation-quantum-eigen-solver/">Variational Quantum Eigen Solver</a></li></ul></li><li><span class="tocitem">Developer Guide</span><ul><li><a class="tocitem" href="../../developer-guide/1.extending-register/">Extending Register: an echo register</a></li><li><a class="tocitem" href="../../developer-guide/2.cuda-acceleration/">CUDA acceleration of Quantum Simulation</a></li><li><a class="tocitem" href="../../developer-guide/3.extern-libraries/">Using External Libraries</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Quick Start</a></li><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quantum Fourier Transformation and Phase Estimation</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/QuantumBFS/tutorials/blob/master/quick-start/2.qft-phase-estimation/main.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><p><a href="https://mybinder.org/v2/gh/QuantumBFS/tutorials/gh-pages?filepath=dev/generated/quick-start/2.qft-phase-estimation/main.ipynb"><img src="https://mybinder.org/badge_logo.svg" alt/></a> <a href="https://nbviewer.jupyter.org/github/QuantumBFS/tutorials/blob/gh-pages/dev/generated/quick-start/2.qft-phase-estimation/main.ipynb"><img src="https://img.shields.io/badge/show-nbviewer-579ACA.svg" alt/></a></p><h1 id="example-qft-1"><a class="docs-heading-anchor" href="#example-qft-1">Quantum Fourier Transformation and Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#example-qft-1" title="Permalink"></a></h1><p>Let&#39;s use Yao first</p><pre><code class="language-julia">using Yao</code></pre><h2 id="Quantum-Fourier-Transformation-1"><a class="docs-heading-anchor" href="#Quantum-Fourier-Transformation-1">Quantum Fourier Transformation</a><a class="docs-heading-anchor-permalink" href="#Quantum-Fourier-Transformation-1" title="Permalink"></a></h2><p>The Quantum Fourier Transformation (QFT) circuit is to repeat two kinds of blocks repeatly:</p><p><img src="assets/qft.png" alt="qft-circuit"/></p><p>The basic building block control phase shift gate is defined as</p><div>\[R(k)=\begin{bmatrix}
 1 &amp; 0\\
 0 &amp; \exp\left(\frac{2\pi i}{2^k}\right)
 \end{bmatrix}\]</div><p>Let&#39;s define block <code>A</code> and block <code>B</code>, block <code>A</code> is actually a control block.</p><pre><code class="language-julia">A(i, j) = control(i, j=&gt;shift(2π/(1&lt;&lt;(i-j+1))))</code></pre><pre><code class="language-none">A (generic function with 1 method)</code></pre><p>Once you construct the blockl you can inspect its matrix using <code>mat</code> function. Let&#39;s construct the circuit in dash box A, and see the matrix of <span>$R_4$</span> gate.</p><pre><code class="language-julia">R4 = A(4, 1)</code></pre><pre><code class="language-none">(n -&gt; control(n, 4, 1 =&gt; shift(0.39269908169872414)))</code></pre><p>If you have read about <a href="../1.prepare-ghz-state/#example-ghz-1">preparing GHZ state</a>, you probably know that in Yao, we could just leave the number of qubits, and it will be evaluated when possible.</p><pre><code class="language-julia">R4(5)</code></pre><pre><code class="language-none">nqubits: 5
@@ -113,47 +113,47 @@ P = eigen(rand_unitary(1&lt;&lt;M)).vectors
 phases = rand(1&lt;&lt;M)
 phases[0b010+1] = θ
 U = P * Diagonal(exp.(2π * im * phases)) * P&#39;</code></pre><pre><code class="language-none">32×32 Array{Complex{Float64},2}:
-  -0.267075-0.08852im      -0.0298819+0.162778im   …   -0.110006+0.030824im  
-   0.112634+0.120026im      -0.412738-0.0331863im     -0.0451421-0.323113im  
-   0.126326-0.217472im       0.187425+0.0271854im      0.0261213+0.00839047im
-   0.064407+0.119679im    0.000477352-0.0172202im     -0.0230359+0.0618653im 
-  0.0154993+0.0562849im     -0.023861+0.120591im       -0.010625-0.0727432im 
-  -0.292132-0.133869im      0.0930457-0.0122733im  …  -0.0879678+0.0671555im 
-  0.0862836+0.0505733im    -0.0977265+0.0645081im      0.0424914-0.109948im  
-   0.152781-0.156728im     -0.0278304-0.172248im        0.130889+0.0467269im 
-  -0.051232-0.0121884im      0.180608-0.100142im      -0.0844931-0.0382865im 
-  0.0335888+0.013873im       0.145011+0.0868242im      0.0887585-0.069467im  
-           ⋮                                       ⋱                         
-  0.0121191+0.0256994im    -0.0497875+0.0894344im      0.0709318+0.228093im  
-   0.167427-0.109832im       0.279016-0.0554874im     -0.0366553-0.130592im  
-  0.0821056+0.0255554im    -0.0399293+0.153947im   …    0.123312+0.0387758im 
-  0.0529025+0.00403329im    -0.113377-0.0603614im     -0.0963552+0.100487im  
- -0.0245083+0.0625544im      0.285388-0.0949619im       0.159639+0.121459im  
-   0.187348+0.0431736im    -0.0933194+0.156032im        0.133513-0.0650277im 
-   -0.37522-0.103352im      -0.104196+0.0286848im      0.0771086+0.052886im  
-  -0.039052+0.118217im     -0.0447129-0.0712105im  …  -0.0588644-0.095036im  
-  0.0624147+0.0974917im      0.147076+0.0792895im      -0.256217-0.0123066im </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
-   -0.05596754571835259 - 0.11334195175519897im  
-   0.056786137805584995 - 0.02888232294630047im  
-     0.2255561817612369 - 0.16970786963078827im  
-    0.03005833789739758 + 0.05812747612254405im  
-   -0.23643809866907747 + 0.160584043389298im    
-   -0.09188895349769158 - 0.005628527673610058im 
-   0.022199661945258742 + 0.0025606314173631586im
-   0.010443790722942558 - 0.013393743735502776im 
-     0.2363914758956277 + 0.08330245639664259im  
- -0.0015760658939630318 + 0.03090075352772019im  
-                        ⋮                        
-    0.08580278016400511 - 0.15306511535897088im  
-    0.10837683507618104 + 0.15711406534553454im  
-  -0.058563266471671926 + 0.018962766649598554im 
-    0.07438995609374852 - 0.20199929492363694im  
-  -0.059339109296166676 - 0.20075520771934754im  
-   -0.11313955055723313 - 0.08692266827235134im  
-   -0.16484338826666906 + 0.028226673503434163im 
-   0.042711573610170875 - 0.23734722552441917im  
-    0.02024479723422492 + 0.04833928768553195im  </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
+     0.179105+0.0415269im   …     0.255618-0.0542417im  
+    0.0608434-0.167972im         0.0765998-0.0152893im  
+   -0.0995017+0.173947im        -0.0282311-0.00440836im 
+    0.0322355-0.203446im        0.00289203+0.044629im   
+ -0.000796011-0.0738755im       0.00408661+0.0746873im  
+    -0.136999-0.116353im    …    0.0271396+0.0675201im  
+     0.225286-0.00442513im         0.17591+0.010337im   
+   -0.0383179+0.0445859im        -0.176156-0.0407562im  
+     0.102284+0.0542871im       -0.0537866+0.186562im   
+   -0.0611477-0.0200155im        0.0052174+0.000164914im
+             ⋮              ⋱                           
+   -0.0586707+0.0287638im         0.205778-0.327032im   
+    -0.269683+0.0308293im        -0.115411-0.0579503im  
+    -0.139934-0.0267671im   …     0.119114-0.0989353im  
+    0.0733611+0.00755521im        0.185886+0.259441im   
+    0.0392997-0.0229998im       -0.0299843+0.043822im   
+   -0.0880807+0.138388im         -0.121589-0.0147436im  
+     0.329452-0.227921im         -0.219128-0.232602im   
+   -0.0619807+0.01347im     …    -0.193405+0.12724im    
+     0.109635+0.168154im       -0.00115089+0.00818356im </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
+   0.07584597684330213 - 0.1433428563736179im  
+  0.011357335993696796 + 0.012414482634582466im
+  0.019652737982434706 - 0.14332511554676997im 
+  -0.14254540725219605 + 0.04430421164730327im 
+  -0.15125643775922332 + 0.10292691654229688im 
+  -0.08960390960271163 - 0.011691423587276872im
+  -0.14690869332475212 - 0.07297115743902474im 
+   0.01020398865043981 - 0.3053856783238149im  
+   0.03350514996917976 - 0.22677652523351505im 
+   0.06242890656979306 - 0.16516918851078827im 
+                       ⋮                       
+  -0.13409205200507823 + 0.05369355201264386im 
+   -0.2551900033799014 - 0.05486024581961646im 
+   -0.2185330671302472 + 0.0800514930527528im  
+   0.07283946576950519 + 0.03734544650688808im 
+  -0.16951729639640387 + 0.140161803221618im   
+   0.09952404332775655 - 0.031939171556573845im
+   0.12222978410796824 + 0.15797916767309464im 
+ -0.005675589862097347 + 0.2746458214586369im  
+  -0.10047461638198585 + 0.1000810055123401im  </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
 r |&gt; PE(N, M, U)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 8/8</code></pre><p>Since our phase can be represented by 3 qubits precisely, we only need to measure once</p><pre><code class="language-julia">results = measure(r, 1:N; nshots=1)</code></pre><pre><code class="language-none">1-element Array{BitBasis.BitStr{3,Int64},1}:
  011 ₍₂₎</code></pre><p>Recall that our QFT&#39;s bit numbering is reversed, let&#39;s reverse it back</p><pre><code class="language-julia">using BitBasis
-estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 8 December 2019 05:58">Sunday 8 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 8 December 2019 06:22">Sunday 8 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
