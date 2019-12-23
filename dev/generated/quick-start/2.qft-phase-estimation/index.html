@@ -117,47 +117,47 @@ P = eigen(rand_unitary(1&lt;&lt;M)).vectors
 phases = rand(1&lt;&lt;M)
 phases[0b010+1] = θ
 U = P * Diagonal(exp.(2π * im * phases)) * P&#39;</code></pre><pre><code class="language-none">32×32 Array{Complex{Float64},2}:
-   0.266365-0.0709409im   0.0821108+0.0951736im   …   0.0363624+0.102876im  
-   0.164131+0.0608155im    0.275884-0.337152im        -0.113413+0.0604925im 
- -0.0337527-0.214666im    -0.069584-0.142645im        0.0946011+0.0574499im 
- -0.0309334-0.102106im   -0.0716083-0.063783im        0.0388316+0.138314im  
-  -0.175098+0.192688im      0.05477+0.0175562im      -0.0432615-0.137774im  
-  0.0936079-0.0111994im   0.0599368-0.0998906im   …   -0.137378-0.0133688im 
-  0.0958631+0.182718im    -0.289381-0.101397im        -0.112859-0.0308172im 
- -0.0858562+0.117806im    0.0902665+7.16874e-5im      0.0131278+0.0927606im 
-  -0.123553-0.118501im     0.183239+0.158152im         0.189231+0.120786im  
- -0.0642152+0.0576922im   0.0245184-0.256147im        0.0901717+0.125393im  
-           ⋮                                      ⋱                         
- 0.00465616-0.132im      -0.0792572-0.0969476im      0.00513185-0.00946168im
-   0.190543+0.125051im    -0.141405+0.0582898im        0.222272+0.288549im  
-   0.097571-0.141042im    -0.106379-0.14587im     …   -0.192372-0.00962159im
-   -0.22095+0.170032im    -0.113345-0.012129im       -0.0915773+0.174208im  
- -0.0852199+0.106845im    -0.105838+0.184868im        -0.173038-0.0847143im 
-   0.275601+0.10916im     0.0694363+0.0302189im       -0.116877-0.092421im  
-  -0.176038-0.0301057im     0.17656-0.0682754im       0.0964232+0.0399492im 
-  -0.110309+0.212507im     0.113552+0.0102953im   …    0.118428+0.180289im  
-  0.0965779+0.0696086im   -0.238741+0.094424im        0.0955354-0.184903im  </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
-   -0.08214439878732532 - 0.2661028755288697im  
-      0.180114826821957 + 0.022800414372571298im
-     0.1180684724117924 + 0.09742535956012628im 
-   -0.13543460628150406 - 0.039463977306971536im
-   -0.07522517199806986 + 0.03296000015493225im 
-   0.007143238099940883 + 0.03297299923205785im 
-   -0.06070611446919254 + 0.044082744145762215im
-   -0.06300500031614728 - 0.0690480549656991im  
-    0.14852144845755016 - 0.21258478409712955im 
-   0.014728769259549301 + 0.1677532862079584im  
-                        ⋮                       
-   -0.11841133469750312 - 0.18675945869293492im 
-   -0.06394855456914382 + 0.06771297926999666im 
-    0.09512288779476238 - 0.19455114060516182im 
-   -0.05563738645519742 + 0.1571328458530251im  
-   -0.07917266860775844 - 0.21049236227472737im 
-    0.20313801234207798 + 0.12827955408860578im 
-   -0.14957468665729018 + 0.05096213927370689im 
-     0.3021181087769015 + 0.0im                 
- -0.0008338181549880086 - 0.19547724582928888im </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
+    0.241305+0.163058im    …     0.264528+0.0334177im  
+   0.0862567+0.0171637im        -0.226464-0.0148819im  
+  -0.0218354+0.206742im        -0.0404273-0.0229893im  
+   0.0214283-0.0227143im          0.13861+0.150369im   
+  -0.0726746+0.0600616im        -0.101761+0.0466185im  
+  -0.0220024+0.211788im    …     0.125111+0.107538im   
+   -0.182243+0.0454279im       -0.0487598+0.0601854im  
+  -0.0319457+0.0166168im         0.245348+0.0577954im  
+   0.0287581-0.0429259im        -0.091048-0.0577655im  
+  -0.0898681+0.0208325im       -0.0480456+0.0290016im  
+            ⋮              ⋱                           
+  -0.0530174-0.27187im          -0.136521+0.0717195im  
+   -0.118177+0.0175385im      -0.00193661-0.0622226im  
+   -0.210956+0.112255im    …   -0.0247258-0.118725im   
+ -0.00985767+0.219231im         -0.163224-0.255239im   
+   -0.214544+0.0755569im        0.0618434-0.000577414im
+    0.208601-0.0930177im          0.17466+0.137579im   
+  -0.0022671-0.127645im        -0.0120155-0.0582339im  
+  -0.0608709+0.0391543im   …     0.182591+0.0189589im  
+   0.0893763-0.00245602im        0.462189+0.22889im    </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
+  -0.14529807996674374 - 0.044725118725255135im
+  -0.13914398257680471 - 0.24635953276083875im 
+  -0.10256425074184113 - 0.23455918292329597im 
+   0.08603631956422655 - 0.0346146295197486im  
+  -0.01751142374791652 - 0.031985263413004im   
+    0.3259416778551351 + 0.0im                 
+  0.012103272344737882 + 0.23539615789258456im 
+    0.1825167086762434 - 0.09907667636929948im 
+   0.08146297587357638 - 0.10199955196135471im 
+  -0.13715491795096743 + 0.022433271892552988im
+                       ⋮                       
+ -0.047522562824807296 + 0.05488631065996724im 
+  -0.09596262493019755 - 0.09569440341166861im 
+ -0.009542258390536825 - 0.1327529327125819im  
+   0.16970488374864778 + 0.004600404815216213im
+  -0.07932650496958524 + 0.011473959354966016im
+    0.2852716341231336 - 0.026063861686252132im
+  -0.15858102636564897 - 0.19725615195188345im 
+  -0.04396591822506845 + 0.15214852888092192im 
+ -0.026597948279426874 - 0.08478719172170111im </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
 r |&gt; PE(N, M, U)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 8/8</code></pre><p>Since our phase can be represented by 3 qubits precisely, we only need to measure once</p><pre><code class="language-julia">results = measure(r, 1:N; nshots=1)</code></pre><pre><code class="language-none">1-element Array{BitBasis.BitStr{3,Int64},1}:
  011 ₍₂₎</code></pre><p>Recall that our QFT&#39;s bit numbering is reversed, let&#39;s reverse it back</p><pre><code class="language-julia">using BitBasis
-estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 23 December 2019 06:27">Monday 23 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 23 December 2019 13:12">Monday 23 December 2019</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
