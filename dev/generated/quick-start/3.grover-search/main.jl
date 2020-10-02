@@ -47,7 +47,7 @@ function single_try(oracle, gen::AbstractBlock{N}, nstep::Int; nbatch::Int) wher
         return r
     end
     reg |> checker
-    res = measure_remove!(reg, (N+1))
+    res = measure!(RemoveMeasured(), reg, (N+1))
     return res, reg
 end
 
@@ -59,11 +59,11 @@ nshot = 3
 
 for nstep = 0:maxtry
     println("number of iter = $nstep")
-    res, reg = single_try(oracle, gen, nstep; nbatch=3)
+    res, regi = single_try(oracle, gen, nstep; nbatch=3)
 
     # success!
     if any(==(1), res)
-        overlap_final = viewbatch(reg, findfirst(==(1), res))'*target_state
+        overlap_final = viewbatch(regi, findfirst(==(1), res))'*target_state
         println("success, overlap = $(overlap_final)")
         break
     end

@@ -1,4 +1,5 @@
 using Yao
+using SymEngine
 
 shor(E) = chain(9,
     # encode circuit

@@ -46,9 +46,9 @@ ControlU(n, m, U) = chain(n+m, control(k, n+1:n+m=>matblock(U^(2^(k-1)))) for k 
 
 PE(n, m, U) =
     chain(n+m, # total number of the qubits
-        concentrate(Hadamards(n), 1:n), # apply H in local scope
+        subroutine(Hadamards(n), 1:n), # apply H in local scope
         ControlU(n, m, U),
-        concentrate(QFT(n)', 1:n))
+        subroutine(QFT(n)', 1:n))
 
 r = rand_state(5)
 

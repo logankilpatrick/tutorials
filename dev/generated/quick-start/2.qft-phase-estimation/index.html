@@ -71,7 +71,7 @@ qft(4)</code></pre><pre><code class="language-none">nqubits: 4
 chain
 ├─ chain
 │  ├─ put on (1)
-│  │  └─ H gate
+│  │  └─ H
 │  ├─ control(2)
 │  │  └─ (1,) shift(1.5707963267948966)
 │  ├─ control(3)
@@ -80,19 +80,19 @@ chain
 │     └─ (1,) shift(0.39269908169872414)
 ├─ chain
 │  ├─ put on (2)
-│  │  └─ H gate
+│  │  └─ H
 │  ├─ control(3)
 │  │  └─ (2,) shift(1.5707963267948966)
 │  └─ control(4)
 │     └─ (2,) shift(0.7853981633974483)
 ├─ chain
 │  ├─ put on (3)
-│  │  └─ H gate
+│  │  └─ H
 │  └─ control(4)
 │     └─ (3,) shift(1.5707963267948966)
 └─ chain
    └─ put on (4)
-      └─ H gate
+      └─ H
 </code></pre><h2 id="Wrap-QFT-to-an-external-block-1"><a class="docs-heading-anchor" href="#Wrap-QFT-to-an-external-block-1">Wrap QFT to an external block</a><a class="docs-heading-anchor-permalink" href="#Wrap-QFT-to-an-external-block-1" title="Permalink"></a></h2><p>In most cases, <code>function</code>s are enough to wrap quantum circuits, like <code>A</code> and <code>B</code> we defined above, but sometimes, we need to dispatch specialized methods on certain kinds of quantum circuit, or we want to define an external block to export, thus, it&#39;s useful to be able to wrap circuit to custom blocks.</p><p>First, we define a new type as subtype of <code>PrimitiveBlock</code> since we are not going to use the subblocks of <code>QFT</code>, if you need to use its subblocks, it&#39;d be better to define it under <code>CompositeBlock</code>.</p><pre><code class="language-julia">struct QFT{N} &lt;: PrimitiveBlock{N} end
 QFT(n::Int) = QFT{n}()</code></pre><pre><code class="language-none">Main.ex-index.QFT</code></pre><p>Now, let&#39;s define its circuit</p><pre><code class="language-julia">circuit(::QFT{N}) where N = qft(N)</code></pre><pre><code class="language-none">circuit (generic function with 1 method)</code></pre><p>And forward <code>mat</code> to its circuit&#39;s matrix</p><pre><code class="language-julia">YaoBlocks.mat(::Type{T}, x::QFT) where T = mat(T, circuit(x))</code></pre><p>You may notice, it is a little ugly to print <code>QFT</code> at the moment, this is because we print the type summary by default, you can define your own printing by overloading <code>print_block</code></p><pre><code class="language-julia">YaoBlocks.print_block(io::IO, x::QFT{N}) where N = print(io, &quot;QFT($N)&quot;)</code></pre><p>Since it is possible to use FFT to simulate the results of QFT (like cheating), we could define our custom <code>apply!</code> method:</p><pre><code class="language-julia">using FFTW, LinearAlgebra
 
@@ -104,11 +104,11 @@ function YaoBlocks.apply!(r::ArrayReg, x::QFT)
 end</code></pre><p>Now let&#39;s check if our <code>apply!</code> method is correct:</p><pre><code class="language-julia">r = rand_state(5)
 r1 = r |&gt; copy |&gt; QFT(5)
 r2 = r |&gt; copy |&gt; circuit(QFT(5))
-r1 ≈ r2</code></pre><pre><code class="language-none">true</code></pre><p>We can get iQFT (inverse QFT) directly by calling <code>adjoint</code></p><pre><code class="language-julia">QFT(5)&#39;</code></pre><pre><code class="language-none"> [†]QFT(5)</code></pre><p>QFT and iQFT are different from FFT and IFFT in three ways,</p><ol><li>they are different by a factor of <span>$\sqrt{2^n}$</span> with <span>$n$</span> the number of qubits.</li><li>the <a href="https://quantumbfs.github.io/BitBasis.jl/stable/tutorial/#Conventions-1">bit numbering</a> will exchange after applying QFT or iQFT.</li><li>due to the convention, QFT is more related to IFFT rather than FFT.</li></ol><h2 id="Phase-Estimation-1"><a class="docs-heading-anchor" href="#Phase-Estimation-1">Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#Phase-Estimation-1" title="Permalink"></a></h2><p>Since we have QFT and iQFT blocks we can then use them to realize phase estimation circuit, what we want to realize is the following circuit:</p><p><img src="assets/phaseest.png" alt="phase estimation"/></p><pre><code class="language-julia">using Yao</code></pre><p>First we call Hadamard gates repeatly on first <code>n</code> qubits.</p><pre><code class="language-julia">Hadamards(n) = repeat(H, 1:n)</code></pre><pre><code class="language-none">Hadamards (generic function with 1 method)</code></pre><p>Then in dashed box <code>B</code>, we have controlled unitaries:</p><pre><code class="language-julia">ControlU(n, m, U) = chain(n+m, control(k, n+1:n+m=&gt;matblock(U^(2^(k-1)))) for k in 1:n)</code></pre><pre><code class="language-none">ControlU (generic function with 1 method)</code></pre><p>each of them is a <code>U</code> of power <span>$2^(k-1)$</span>.</p><p>Since we will only apply the qft and Hadamard on first <code>n</code> qubits, we could use <code>Concentrator</code>, which creates a context of a sub-scope of the qubits.</p><pre><code class="language-julia">PE(n, m, U) =
+r1 ≈ r2</code></pre><pre><code class="language-none">true</code></pre><p>We can get iQFT (inverse QFT) directly by calling <code>adjoint</code></p><pre><code class="language-julia">QFT(5)&#39;</code></pre><pre><code class="language-none"> [†]QFT(5)</code></pre><p>QFT and iQFT are different from FFT and IFFT in three ways,</p><ol><li>they are different by a factor of <span>$\sqrt{2^n}$</span> with <span>$n$</span> the number of qubits.</li><li>the <a href="https://quantumbfs.github.io/BitBasis.jl/stable/tutorial/#Conventions-1">bit numbering</a> will exchange after applying QFT or iQFT.</li><li>due to the convention, QFT is more related to IFFT rather than FFT.</li></ol><h2 id="Phase-Estimation-1"><a class="docs-heading-anchor" href="#Phase-Estimation-1">Phase Estimation</a><a class="docs-heading-anchor-permalink" href="#Phase-Estimation-1" title="Permalink"></a></h2><p>Since we have QFT and iQFT blocks we can then use them to realize phase estimation circuit, what we want to realize is the following circuit:</p><p><img src="assets/phaseest.png" alt="phase estimation"/></p><pre><code class="language-julia">using Yao</code></pre><p>First we call Hadamard gates repeatly on first <code>n</code> qubits.</p><pre><code class="language-julia">Hadamards(n) = repeat(H, 1:n)</code></pre><pre><code class="language-none">Hadamards (generic function with 1 method)</code></pre><p>Then in dashed box <code>B</code>, we have controlled unitaries:</p><pre><code class="language-julia">ControlU(n, m, U) = chain(n+m, control(k, n+1:n+m=&gt;matblock(U^(2^(k-1)))) for k in 1:n)</code></pre><pre><code class="language-none">ControlU (generic function with 1 method)</code></pre><p>each of them is a <code>U</code> of power <span>$2^(k-1)$</span>.</p><p>Since we will only apply the qft and Hadamard on first <code>n</code> qubits, we could use <code>Subroutine</code>, which creates a context of a sub-scope of the qubits.</p><pre><code class="language-julia">PE(n, m, U) =
     chain(n+m, # total number of the qubits
-        concentrate(Hadamards(n), 1:n), # apply H in local scope
+        subroutine(Hadamards(n), 1:n), # apply H in local scope
         ControlU(n, m, U),
-        concentrate(QFT(n)&#39;, 1:n))</code></pre><pre><code class="language-none">PE (generic function with 1 method)</code></pre><p>we use the first <code>n</code> qubits as the output space to store phase <span>$ϕ$</span>, and the other <code>m</code> qubits as the input state which corresponds to an eigenvector of oracle matrix <code>U</code>.</p><p>The concentrator here uses <code>focus!</code> and <code>relax!</code> to manage a local scope of quantum circuit, and only active the first <code>n</code> qubits while applying the block inside the concentrator context, and the scope will be <code>relax!</code>ed back, after the context. This is equivalent to manually <code>focus!</code> then <code>relax!</code></p><p>fullly activated</p><pre><code class="language-julia">r = rand_state(5)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
+        subroutine(QFT(n)&#39;, 1:n))</code></pre><pre><code class="language-none">PE (generic function with 1 method)</code></pre><p>we use the first <code>n</code> qubits as the output space to store phase <span>$ϕ$</span>, and the other <code>m</code> qubits as the input state which corresponds to an eigenvector of oracle matrix <code>U</code>.</p><p>The concentrator here uses <code>focus!</code> and <code>relax!</code> to manage a local scope of quantum circuit, and only active the first <code>n</code> qubits while applying the block inside the concentrator context, and the scope will be <code>relax!</code>ed back, after the context. This is equivalent to manually <code>focus!</code> then <code>relax!</code></p><p>fullly activated</p><pre><code class="language-julia">r = rand_state(5)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 5/5</code></pre><p>first 3 qubits activated</p><pre><code class="language-julia">focus!(r, 1:3)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 3/5</code></pre><p>relax back to the original</p><pre><code class="language-julia">relax!(r, 1:3)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 5/5</code></pre><p>In this way, we will be able to apply small operator directly on the subset of the qubits.</p><p>Details about the algorithm can be found here: <a href="ttps://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a></p><p>Now let&#39;s check the results of our phase estimation.</p><p>First we need to set up a unitary with known phase, we set the phase to be 0.75, which is <code>0.75 * 2^3 == 6 == 0b110</code> .</p><h1 id="using-LinearAlgebra-1"><a class="docs-heading-anchor" href="#using-LinearAlgebra-1">using LinearAlgebra</a><a class="docs-heading-anchor-permalink" href="#using-LinearAlgebra-1" title="Permalink"></a></h1><pre><code class="language-julia">N, M = 3, 5
@@ -117,47 +117,47 @@ P = eigen(rand_unitary(1&lt;&lt;M)).vectors
 phases = rand(1&lt;&lt;M)
 phases[0b010+1] = θ
 U = P * Diagonal(exp.(2π * im * phases)) * P&#39;</code></pre><pre><code class="language-none">32×32 Array{Complex{Float64},2}:
-  -0.221805-0.163765im      0.143412+0.0443704im  …  -0.0357113-0.0046107im 
-  0.0594511-0.114205im     -0.290718-0.0943699im     -0.0896703-0.0491766im 
-   -0.11794+0.0877386im    0.0349155+0.0502977im      -0.224744+0.0700713im 
-   0.018016+0.0556609im     -0.02606+0.057906im      -0.0109687+0.0869953im 
-   0.172814+0.131303im    -0.0111638-0.0657195im      -0.116167+0.17282im   
- -0.0291284-0.0207461im    -0.109179+0.301891im   …    0.171757-0.0389728im 
-   0.179648+0.00350392im   0.0215536+0.0384987im       0.178424-0.0623305im 
- -0.0383668-0.197842im     -0.166125-0.104603im      -0.0662219-0.0539236im 
-  -0.121225+0.100243im    -0.0249649+0.105043im        0.188443+0.308625im  
-   -0.16327+0.00735859im   -0.144226-0.230074im        0.115982+0.00316332im
-           ⋮                                      ⋱                         
-  0.0306327+0.0385703im     0.154436+0.0597145im       0.123607-0.0121001im 
- -0.0420878-0.0691909im   -0.0138479-0.0686411im     -0.0544969+0.0277096im 
-   -0.18735-0.078418im     0.0292886-0.0180086im  …   -0.153629+0.0523213im 
-  -0.137854-0.043463im     0.0558171-0.0406754im       -0.17275-0.0948326im 
-   0.193949+0.238076im      0.046613+0.177992im       -0.123499-0.0553409im 
-   -0.13043-0.0333137im     0.135731+0.0770629im       0.190921-0.0963759im 
-  -0.147655-0.235514im     0.0791569+0.171042im       0.0490463-0.00589173im
- -0.0516279+0.029022im     0.0694433+0.0104537im  …    0.154085-0.0254419im 
- 0.00717134+0.0150907im    -0.259765-0.0414928im      0.0280891-0.255202im  </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
-  -0.004991335642450273 - 0.2277988838860045im  
-   -0.16574785561959446 - 0.007300973032369137im
-   0.019130372673147364 - 0.16556187642109887im 
-     0.0802135500560454 - 0.04643358978365406im 
-     0.3516762179914539 + 0.0im                 
-    0.10860222753528975 - 0.21725602863394108im 
-    -0.0373283064911936 + 0.05270915809300915im 
-  -0.005011748731003658 - 0.08229967462077996im 
-    0.25689633324470584 - 0.012499716619308229im
-   -0.08966107361038585 - 0.012354250572535077im
-                        ⋮                       
-   0.006588815523354139 - 0.011553505494405073im
-    0.10137338673470353 + 0.026762738796603756im
-    -0.0822426786131844 - 0.08068328757178837im 
-    -0.1861293931994568 + 0.13144338291287627im 
- -0.0009945313484759789 + 0.11095436680155599im 
-   0.049961907187387355 + 0.24580253513311953im 
-   -0.10639396186551088 - 0.1237223405267666im  
-   -0.17513629447074197 - 0.1701725820318281im  
-   -0.26708381415936544 + 0.06750436404880808im </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
+    0.401021+0.235514im     …   0.0281934+0.0320633im 
+  -0.0884698+0.389797im           0.04686+0.0571662im 
+ -0.00555346-0.0546398im        0.0610678+2.50126e-5im
+   0.0983195+0.0244273im        -0.255632+0.0853043im 
+   0.0227429-0.0341221im         0.116117-0.00636011im
+   0.0475562+0.123339im     …   0.0529147+0.117025im  
+   0.0338162+0.010383im         -0.118795+0.259618im  
+    0.107696+0.102918im        -0.0102958+0.0940688im 
+   -0.079934+0.0661718im         0.127058-0.0712044im 
+  -0.0641069-0.00624995im       -0.185365-0.18934im   
+            ⋮               ⋱                         
+    0.051536-0.185461im        -0.0780083+0.161im     
+   -0.193025-0.0696975im       -0.0537706-0.0476894im 
+   -0.184437-0.166998im     …   0.0404292-0.0322286im 
+     0.05315+0.114005im         0.0359169-0.0355882im 
+   -0.136672-0.351507im         0.0191012+0.110083im  
+  -0.0364615-0.000969832im       0.078234-0.0778853im 
+  -0.0159043+0.0683254im         0.176285-0.0721558im 
+   0.0247915-0.117675im     …   -0.190536-0.26225im   
+   -0.125587-0.0658208im       -0.0107847-0.0381481im </code></pre><p>and then generate the state <span>$ψ$</span></p><pre><code class="language-julia">psi = P[:, 3]</code></pre><pre><code class="language-none">32-element Array{Complex{Float64},1}:
+  -0.16420561159201263 - 0.030763454569309137im
+   0.04058908692287253 + 0.052027256943978285im
+  -0.02882401582169488 - 0.1005987658608871im  
+   0.01224771142676646 - 0.05372923089956514im 
+  -0.10246601433180512 - 0.01672490007979994im 
+ -0.015123665098880718 - 0.057322127939900026im
+  0.020454521976710924 - 0.21328609485504554im 
+    0.1379046672426651 + 0.02952566087521591im 
+ 0.0029255443749778426 + 0.13476181529562942im 
+   0.07756267700229519 - 0.03751631253181015im 
+                       ⋮                       
+  -0.20300851834089323 - 0.2561646374160843im  
+ -0.026392592739656252 - 0.0241038843791569im  
+   0.03570446180312487 + 0.13040584036126784im 
+    0.3589429756229404 + 0.0im                 
+   0.02696268397973453 + 0.17515410205761484im 
+ -0.020913193545198043 + 0.07255526367432436im 
+ -0.045614558679903924 + 0.08982647433992588im 
+  -0.03807793984460046 - 0.03125889536523199im 
+   0.25401984344855466 + 0.04151432310394296im </code></pre><p>In the phase estimation process, we will feed the state to circuit and measure the first <code>n</code> qubits processed by iQFT.</p><pre><code class="language-julia">r = join(ArrayReg(psi), zero_state(N))
 r |&gt; PE(N, M, U)</code></pre><pre><code class="language-none">ArrayReg{1, Complex{Float64}, Array...}
     active qubits: 8/8</code></pre><p>Since our phase can be represented by 3 qubits precisely, we only need to measure once</p><pre><code class="language-julia">results = measure(r, 1:N; nshots=1)</code></pre><pre><code class="language-none">1-element Array{BitBasis.BitStr{3,Int64},1}:
  011 ₍₂₎</code></pre><p>Recall that our QFT&#39;s bit numbering is reversed, let&#39;s reverse it back</p><pre><code class="language-julia">using BitBasis
-estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 4 April 2020 21:20">Saturday 4 April 2020</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+estimated_phase = bfloat(results[]; nbits=N)</code></pre><pre><code class="language-none">0.75</code></pre><p>the phase is exactly <code>0.75</code>!</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../1.prepare-ghz-state/">« Prepare Greenberger–Horne–Zeilinger state with Quantum Circuit</a><a class="docs-footer-nextpage" href="../3.grover-search/">Grover Search »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 October 2020 13:50">Friday 2 October 2020</span>. Using Julia version 1.3.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

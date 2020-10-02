@@ -25,15 +25,13 @@ function Yao.relax!(reg::EchoReg{B}, locs; to_nactive=nqubits(reg)) where {B}
     return true
 end
 
-function Yao.measure!(rng, ::ComputationalBasis, reg::EchoReg{B}, locs) where {B}
+function Yao.measure!(::NoPostProcess, ::ComputationalBasis, reg::EchoReg{B}, locs) where {B}
     println("measure -> $locs")
     return true
 end
 
 r = EchoReg{10}(3, 2)
 r |> put(3, 2=>X) |> control(3, 3, 2=>X) |> concentrate(3, put(1, 1=>X), 2:2) |> measure!
-
-r |> cache(X)
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 
